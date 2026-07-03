@@ -3,15 +3,17 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import Lenis from 'lenis';
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { shaderState } from '$lib/state/motion.svelte';
 
 	let { children } = $props();
 	let lenisInstance = $state<Lenis | null>(null);
 
-	onMount(() => {
-		// Initialize GSAP ScrollTrigger plugin
+	onMount(async () => {
+		// Dynamically import GSAP to prevent SSR issues
+		const { gsap } = await import('gsap');
+		const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+		
+		// Register ScrollTrigger plugin
 		gsap.registerPlugin(ScrollTrigger);
 
 		// Initialize Lenis Scroll with fine-tuned parameters for buttery smooth scrolling

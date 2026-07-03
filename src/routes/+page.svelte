@@ -1,16 +1,25 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Canvas } from '@threlte/core';
-	import Scene from '$lib/components/Scene.svelte';
-	import PostProcessing from '$lib/components/PostProcessing.svelte';
 	import Slice from '$lib/components/Slice.svelte';
 	import ArchitectConsole from '$lib/components/ArchitectConsole.svelte';
+
+	let Scene = $state<any>(null);
+	let PostProcessing = $state<any>(null);
+
+	onMount(async () => {
+		const sceneModule = await import('$lib/components/Scene.svelte');
+		const ppModule = await import('$lib/components/PostProcessing.svelte');
+		Scene = sceneModule.default;
+		PostProcessing = ppModule.default;
+	});
 </script>
 
 <div class="relative w-full overflow-hidden min-h-screen bg-bg-cream">
 	<!-- Fixed Threlte 3D Background Canvas with on-demand rendering -->
 	<div class="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-transparent">
-		{#if browser}
+		{#if browser && Scene && PostProcessing}
 			<Canvas autoRender={false} frameloop="demand">
 				<Scene />
 				<PostProcessing />
