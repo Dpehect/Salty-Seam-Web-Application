@@ -16,7 +16,7 @@ export function MaterialLab() {
         overflow: "hidden",
       }}
     >
-      {/* Background texture lines */}
+      {/* Subtle background lines */}
       <div
         aria-hidden
         style={{
@@ -24,7 +24,7 @@ export function MaterialLab() {
           inset: 0,
           overflow: "hidden",
           pointerEvents: "none",
-          opacity: 0.4,
+          opacity: 0.35,
         }}
       >
         {Array.from({ length: 6 }).map((_, i) => (
@@ -46,31 +46,32 @@ export function MaterialLab() {
         className="editorial-container"
         style={{ position: "relative", zIndex: 1 }}
       >
-        {/* Section header */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-10%" }}
+        {/* Chapter header */}
+        <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "2rem",
-            marginBottom: "clamp(4rem, 7vw, 8rem)",
+            gap: "clamp(1rem, 2vw, 2rem)",
+            marginBottom: "clamp(3rem, 6vw, 7rem)",
             alignItems: "end",
           }}
         >
-          <motion.div variants={fadeIn} style={{ gridColumn: "1 / 3" }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            style={{ gridColumn: "1 / 3" }}
+          >
             <span
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(3rem, 5vw, 5rem)",
+                fontSize: "clamp(2.5rem, 4.5vw, 5rem)",
                 fontWeight: 400,
                 fontStyle: "italic",
                 color: "var(--color-sand)",
                 lineHeight: 1,
                 display: "block",
-                marginBottom: "0.5rem",
+                marginBottom: "0.4rem",
               }}
             >
               04
@@ -78,11 +79,17 @@ export function MaterialLab() {
             <span className="eyebrow">Chapter Four</span>
           </motion.div>
 
-          <motion.div variants={fadeUp} style={{ gridColumn: "3 / 10" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            style={{ gridColumn: "3 / 10" }}
+          >
             <h2
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(2.5rem, 6vw, 6.5rem)",
+                fontSize: "clamp(2.25rem, 5.5vw, 6.5rem)",
                 fontWeight: 400,
                 lineHeight: 0.95,
                 letterSpacing: "-0.025em",
@@ -100,7 +107,10 @@ export function MaterialLab() {
           </motion.div>
 
           <motion.div
-            variants={fadeIn}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             style={{ gridColumn: "10 / 13", alignSelf: "end" }}
           >
             <p
@@ -115,10 +125,11 @@ export function MaterialLab() {
               materials that might inhabit it.
             </p>
           </motion.div>
-        </motion.div>
+        </div>
 
-        {/* Two-column layout: editorial copy + form */}
+        {/* Content grid — editorial copy left, form right */}
         <div
+          className="material-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
@@ -126,7 +137,7 @@ export function MaterialLab() {
             alignItems: "start",
           }}
         >
-          {/* Left: editorial copy */}
+          {/* Left copy — cols 1–4 */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -137,19 +148,19 @@ export function MaterialLab() {
             <motion.hr
               variants={fadeIn}
               className="hairline"
-              style={{ marginBottom: "2rem" }}
+              style={{ marginBottom: "1.75rem" }}
             />
 
             <motion.p
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(1.125rem, 2vw, 1.4375rem)",
+                fontSize: "clamp(1.0625rem, 1.8vw, 1.4375rem)",
                 fontWeight: 400,
                 fontStyle: "italic",
                 lineHeight: 1.55,
                 color: "var(--color-text)",
-                marginBottom: "2rem",
+                marginBottom: "1.75rem",
               }}
             >
               &ldquo;The Material Lab is where objects are matched to
@@ -163,7 +174,7 @@ export function MaterialLab() {
                 fontSize: "0.875rem",
                 lineHeight: 1.85,
                 color: "var(--color-muted)",
-                marginBottom: "2rem",
+                marginBottom: "1.5rem",
               }}
             >
               Every project begins with a material conversation. Tell us about
@@ -178,7 +189,7 @@ export function MaterialLab() {
                 fontSize: "0.875rem",
                 lineHeight: 1.85,
                 color: "var(--color-muted)",
-                marginBottom: "2.5rem",
+                marginBottom: "2.25rem",
               }}
             >
               Response within two working days. All inquiries are treated with
@@ -190,7 +201,7 @@ export function MaterialLab() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.75rem",
+                gap: "0.625rem",
               }}
             >
               {[
@@ -204,7 +215,7 @@ export function MaterialLab() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    paddingBottom: "0.75rem",
+                    paddingBottom: "0.625rem",
                     borderBottom: "1px solid var(--color-sand)",
                   }}
                 >
@@ -223,15 +234,15 @@ export function MaterialLab() {
             </motion.div>
           </motion.div>
 
-          {/* Right: form */}
+          {/* Right form — cols 5–13 */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{
               duration: 0.9,
               ease: [0.25, 0.1, 0.1, 1],
-              delay: 0.2,
+              delay: 0.15,
             }}
             style={{ gridColumn: "5 / 13" }}
           >

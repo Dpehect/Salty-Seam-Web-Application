@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeUp, fadeIn, staggerContainer } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
@@ -19,15 +20,15 @@ export function AtelierSection() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         pullQuoteRef.current,
-        { y: 30 },
+        { y: 24 },
         {
-          y: -30,
+          y: -24,
           ease: "none",
           scrollTrigger: {
             trigger: pullQuoteRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5,
+            scrub: 1.8,
           },
         },
       );
@@ -53,23 +54,24 @@ export function AtelierSection() {
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-10%" }}
+          viewport={{ once: true, margin: "-8%" }}
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr auto",
-            alignItems: "flex-start",
-            gap: "2rem",
-            marginBottom: "clamp(4rem, 8vw, 9rem)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "clamp(3rem, 6vw, 7rem)",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
         >
           <motion.div
             variants={fadeIn}
-            style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}
+            style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}
           >
             <span
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(4rem, 8vw, 8rem)",
+                fontSize: "clamp(3.5rem, 7vw, 7rem)",
                 fontWeight: 400,
                 lineHeight: 1,
                 color: "var(--color-sand)",
@@ -83,7 +85,7 @@ export function AtelierSection() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.25rem",
+                gap: "0.2rem",
               }}
             >
               <span className="eyebrow">Chapter One</span>
@@ -95,100 +97,90 @@ export function AtelierSection() {
               </span>
             </div>
           </motion.div>
-
-          <motion.div
-            variants={fadeIn}
-            style={{
-              alignSelf: "flex-end",
-              paddingBottom: "0.5rem",
-            }}
-          >
+          <motion.div variants={fadeIn}>
             <hr
               className="hairline"
-              style={{ width: "clamp(4rem, 12vw, 14rem)" }}
+              style={{ width: "clamp(3rem, 10vw, 12rem)" }}
             />
           </motion.div>
         </motion.div>
 
-        {/* Asymmetric body layout */}
+        {/* Main asymmetric layout */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "2rem",
+            gap: "clamp(1.5rem, 2.5vw, 2.5rem)",
             alignItems: "start",
           }}
         >
-          {/* Left column: abstract material panel */}
+          {/* Left: Real image */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-5%" }}
             transition={{ duration: 1.3, ease: [0.25, 0.1, 0.1, 1] }}
             style={{
               gridColumn: "1 / 5",
               gridRow: "1 / 3",
+              position: "relative",
               aspectRatio: "3/4",
               borderRadius: "2px",
-              background:
-                "linear-gradient(160deg, #D4C5A9 0%, #B8A882 35%, #C4956A 70%, #8C7058 100%)",
-              position: "relative",
               overflow: "hidden",
             }}
           >
-            {/* Texture overlay lines */}
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: `${(i + 1) * 11}%`,
-                  height: "1px",
-                  backgroundColor: "rgba(255,255,255,0.15)",
-                }}
-              />
-            ))}
+            <Image
+              src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=800&q=85&fit=crop"
+              alt="Atelier — hands shaping organic textile material"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              style={{ objectFit: "cover", objectPosition: "center" }}
+            />
             <div
               style={{
                 position: "absolute",
-                bottom: "1.5rem",
-                left: "1.5rem",
-                right: "1.5rem",
+                inset: 0,
+                background:
+                  "linear-gradient(180deg, transparent 60%, rgba(44,36,33,0.35) 100%)",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "1.25rem",
+                left: "1.25rem",
               }}
             >
               <span
                 className="eyebrow"
-                style={{ color: "rgba(249,247,243,0.7)" }}
+                style={{ color: "rgba(244,241,236,0.8)" }}
               >
                 Material Archive
               </span>
             </div>
           </motion.div>
 
-          {/* Main body text */}
+          {/* Center: Body text */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-8%" }}
             style={{
-              gridColumn: "5 / 11",
-              paddingTop: "clamp(3rem, 6vw, 8rem)",
+              gridColumn: "5 / 10",
+              paddingTop: "clamp(1.5rem, 4vw, 5rem)",
             }}
           >
             <motion.h2
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(2rem, 4vw, 3.75rem)",
+                fontSize: "clamp(1.875rem, 3.5vw, 3.5rem)",
                 fontWeight: 400,
                 lineHeight: 1.12,
                 letterSpacing: "-0.02em",
                 color: "var(--color-text)",
-                marginBottom: "clamp(2rem, 3vw, 3.5rem)",
+                marginBottom: "clamp(1.5rem, 2.5vw, 3rem)",
                 maxWidth: "16ch",
               }}
             >
@@ -199,11 +191,10 @@ export function AtelierSection() {
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
+                fontSize: "clamp(0.9rem, 1.25vw, 1.0625rem)",
                 lineHeight: 1.9,
                 color: "var(--color-muted)",
-                maxWidth: "52ch",
-                marginBottom: "1.75rem",
+                marginBottom: "1.5rem",
               }}
             >
               Seam Salty works between softness and structure — where coastal
@@ -216,11 +207,10 @@ export function AtelierSection() {
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
+                fontSize: "clamp(0.9rem, 1.25vw, 1.0625rem)",
                 lineHeight: 1.9,
                 color: "var(--color-muted)",
-                maxWidth: "52ch",
-                marginBottom: "2.5rem",
+                marginBottom: "2.25rem",
               }}
             >
               The atelier is located in the interior of Alentejo, Portugal,
@@ -232,12 +222,12 @@ export function AtelierSection() {
             <motion.div variants={fadeUp}>
               <hr
                 className="hairline"
-                style={{ marginBottom: "1.5rem", opacity: 0.5 }}
+                style={{ marginBottom: "1.25rem", opacity: 0.5 }}
               />
               <div
                 style={{
                   display: "flex",
-                  gap: "clamp(2rem, 4vw, 4rem)",
+                  gap: "clamp(1.5rem, 3vw, 3.5rem)",
                   flexWrap: "wrap",
                 }}
               >
@@ -251,14 +241,14 @@ export function AtelierSection() {
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      gap: "0.35rem",
+                      gap: "0.3rem",
                     }}
                   >
                     <span className="eyebrow">{item.label}</span>
                     <span
                       style={{
                         fontFamily: "var(--font-serif)",
-                        fontSize: "1.125rem",
+                        fontSize: "1.0625rem",
                         fontWeight: 400,
                         fontStyle: "italic",
                         color: "var(--color-text)",
@@ -272,30 +262,30 @@ export function AtelierSection() {
             </motion.div>
           </motion.div>
 
-          {/* Pull quote — floats with GSAP parallax */}
+          {/* Right: Pull quote */}
           <div
             style={{
-              gridColumn: "8 / 13",
-              marginTop: "clamp(4rem, 6vw, 6rem)",
+              gridColumn: "10 / 13",
+              paddingTop: "clamp(4rem, 8vw, 9rem)",
             }}
           >
             <blockquote
               ref={pullQuoteRef}
               style={{
                 borderLeft: "2px solid var(--color-terracotta)",
-                paddingLeft: "clamp(1.25rem, 2vw, 2rem)",
+                paddingLeft: "clamp(1rem, 1.5vw, 1.75rem)",
                 margin: 0,
               }}
             >
               <p
                 style={{
                   fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(1.125rem, 2vw, 1.625rem)",
+                  fontSize: "clamp(1rem, 1.75vw, 1.5rem)",
                   fontWeight: 400,
                   fontStyle: "italic",
                   lineHeight: 1.5,
                   color: "var(--color-text)",
-                  marginBottom: "1rem",
+                  marginBottom: "0.875rem",
                 }}
               >
                 &ldquo;Objects composed as quiet interruptions — tactile,
@@ -314,6 +304,16 @@ export function AtelierSection() {
           </div>
         </div>
       </div>
+
+      {/* Responsive: on mobile the pull quote goes below */}
+      <style>{`
+        @media (max-width: 900px) {
+          #atelier .atelier-grid {
+            display: flex !important;
+            flex-direction: column;
+          }
+        }
+      `}</style>
     </section>
   );
 }

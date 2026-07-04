@@ -27,7 +27,6 @@ function AtelierObject() {
   return (
     <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.4}>
       <group>
-        {/* Central sculptural object */}
         <mesh ref={meshRef} position={[0, 0, 0]}>
           <sphereGeometry args={[1.1, 64, 64]} />
           <MeshDistortMaterial
@@ -38,8 +37,6 @@ function AtelierObject() {
             metalness={0.05}
           />
         </mesh>
-
-        {/* Orbiting ring */}
         <mesh
           ref={torusRef}
           position={[0, 0, 0]}
@@ -52,14 +49,10 @@ function AtelierObject() {
             metalness={0.7}
           />
         </mesh>
-
-        {/* Small accent sphere */}
         <mesh position={[1.6, 0.6, 0.4]}>
           <sphereGeometry args={[0.18, 32, 32]} />
           <meshStandardMaterial color="#B85C38" roughness={0.9} metalness={0} />
         </mesh>
-
-        {/* Ground plinth */}
         <mesh position={[0, -1.65, 0]}>
           <cylinderGeometry args={[1.2, 1.3, 0.12, 64]} />
           <meshStandardMaterial
@@ -73,7 +66,7 @@ function AtelierObject() {
   );
 }
 
-function ShowroomLighting() {
+function Scene() {
   return (
     <>
       <ambientLight intensity={0.6} color="#F9F0E8" />
@@ -85,14 +78,6 @@ function ShowroomLighting() {
       />
       <pointLight position={[-4, 2, -2]} intensity={0.5} color="#E8D5B8" />
       <pointLight position={[2, -2, 4]} intensity={0.3} color="#B85C3844" />
-    </>
-  );
-}
-
-function Scene() {
-  return (
-    <>
-      <ShowroomLighting />
       <AtelierObject />
     </>
   );
@@ -113,31 +98,33 @@ export function Showroom3D() {
       }}
     >
       <div className="editorial-container">
-        {/* Section header */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-10%" }}
+        {/* Section header — flex on mobile, grid on desktop */}
+        <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "2rem",
+            gap: "clamp(1rem, 2vw, 2rem)",
             alignItems: "end",
-            marginBottom: "clamp(3rem, 5vw, 6rem)",
+            marginBottom: "clamp(2.5rem, 5vw, 6rem)",
           }}
         >
-          <motion.div variants={fadeIn} style={{ gridColumn: "1 / 3" }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ gridColumn: "1 / 3" }}
+          >
             <span
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(3rem, 5vw, 5rem)",
+                fontSize: "clamp(2.5rem, 4.5vw, 5rem)",
                 fontWeight: 400,
                 fontStyle: "italic",
                 color: "var(--color-sand)",
                 lineHeight: 1,
                 display: "block",
-                marginBottom: "0.5rem",
+                marginBottom: "0.4rem",
               }}
             >
               03
@@ -145,11 +132,17 @@ export function Showroom3D() {
             <span className="eyebrow">Chapter Three</span>
           </motion.div>
 
-          <motion.div variants={fadeUp} style={{ gridColumn: "3 / 10" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            style={{ gridColumn: "3 / 10" }}
+          >
             <h2
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(2.5rem, 5vw, 5.5rem)",
+                fontSize: "clamp(2.25rem, 5vw, 5.5rem)",
                 fontWeight: 400,
                 lineHeight: 0.97,
                 letterSpacing: "-0.025em",
@@ -170,7 +163,10 @@ export function Showroom3D() {
           </motion.div>
 
           <motion.div
-            variants={fadeIn}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             style={{ gridColumn: "10 / 13", alignSelf: "end" }}
           >
             <p
@@ -185,18 +181,19 @@ export function Showroom3D() {
               real time.
             </p>
           </motion.div>
-        </motion.div>
+        </div>
 
-        {/* Canvas + editorial overlay layout */}
+        {/* Canvas + text — two-col grid, collapses on mobile */}
         <div
+          className="showroom-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "2rem",
+            gap: "clamp(1rem, 2vw, 2rem)",
             alignItems: "center",
           }}
         >
-          {/* 3D Canvas */}
+          {/* 3D Canvas — cols 1–8 */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -204,7 +201,7 @@ export function Showroom3D() {
             transition={{ duration: 1.5 }}
             style={{
               gridColumn: "1 / 9",
-              height: "clamp(400px, 55vw, 680px)",
+              height: "clamp(360px, 50vw, 640px)",
               backgroundColor: "var(--color-cream)",
               borderRadius: "2px",
               overflow: "hidden",
@@ -226,8 +223,8 @@ export function Showroom3D() {
               >
                 <div
                   style={{
-                    width: "clamp(80px, 12vw, 160px)",
-                    height: "clamp(80px, 12vw, 160px)",
+                    width: "120px",
+                    height: "120px",
                     borderRadius: "50%",
                     backgroundColor: "var(--color-sand)",
                     opacity: 0.6,
@@ -249,19 +246,19 @@ export function Showroom3D() {
             )}
           </motion.div>
 
-          {/* Editorial text panel */}
+          {/* Text panel — cols 9–13 */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            style={{ gridColumn: "9 / 13", paddingLeft: "1rem" }}
+            style={{ gridColumn: "9 / 13" }}
           >
-            <motion.div variants={fadeIn} style={{ marginBottom: "2rem" }}>
-              <hr className="hairline" style={{ marginBottom: "1.5rem" }} />
+            <motion.div variants={fadeIn} style={{ marginBottom: "1.75rem" }}>
+              <hr className="hairline" style={{ marginBottom: "1.25rem" }} />
               <span
                 className="eyebrow"
-                style={{ display: "block", marginBottom: "0.5rem" }}
+                style={{ display: "block", marginBottom: "0.4rem" }}
               >
                 Digital Installation
               </span>
@@ -277,12 +274,12 @@ export function Showroom3D() {
               variants={fadeUp}
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(1.125rem, 2vw, 1.5rem)",
+                fontSize: "clamp(1.0625rem, 1.75vw, 1.4375rem)",
                 fontWeight: 400,
                 fontStyle: "italic",
-                lineHeight: 1.45,
+                lineHeight: 1.48,
                 color: "var(--color-text)",
-                marginBottom: "1.75rem",
+                marginBottom: "1.5rem",
               }}
             >
               &ldquo;Each object catches light the way it would in a gallery —
@@ -301,7 +298,7 @@ export function Showroom3D() {
             >
               The digital showroom renders each sculptural piece in a warm,
               gallery-like environment. Light is positioned to reveal surface,
-              not to impress. Rotate, observe, understand the object.
+              not to impress.
             </motion.p>
 
             <motion.div
@@ -309,8 +306,8 @@ export function Showroom3D() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.75rem",
-                paddingTop: "1.5rem",
+                gap: "0.625rem",
+                paddingTop: "1.25rem",
                 borderTop: "1px solid var(--color-sand)",
               }}
             >
