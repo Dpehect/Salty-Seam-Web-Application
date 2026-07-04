@@ -224,7 +224,7 @@ export default function ScrollStory() {
 								{/* Huge Overlapping Editorial Title */}
 								<motion.h3 
 									variants={itemVariants} 
-									className="text-6xl md:text-[8rem] lg:text-[10rem] font-extralight tracking-tighter leading-none text-[#22201F] uppercase select-none -mb-6 md:-mb-12 font-sans"
+									className="text-6xl md:text-[8rem] lg:text-[10rem] font-extralight tracking-tighter leading-none text-foreground uppercase select-none -mb-6 md:-mb-12 font-serif"
 								>
 									{step.title.split(' ')[0]}
 									<span className={`block font-bold text-luxury-pink text-5xl md:text-[6.5rem] lg:text-[7.5rem] tracking-tighter -mt-2`}>

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 const ScrollStory = dynamic(() => import('@/components/shop/ScrollStory'), {
 	ssr: false,
 	loading: () => (
-		<div className="w-full h-screen flex items-center justify-center bg-[#FAF8F5]">
+		<div className="w-full h-screen flex items-center justify-center bg-background">
 			<span className="text-xs uppercase tracking-[0.25em] text-luxury-pink animate-pulse font-medium">
 				Synchronizing Showroom...
 			</span>
@@ -60,11 +60,11 @@ export default function Home() {
 	};
 
 	return (
-		<div className="min-h-screen bg-[#FAF8F5] text-[#22201F] font-sans flex flex-col antialiased">
+		<div className="min-h-screen bg-background text-foreground font-sans flex flex-col antialiased">
 			{/* Brand Header */}
-			<header className="sticky top-0 z-50 bg-[#FAF8F5]/85 backdrop-blur-md border-b border-[#EAE1D9] py-5 px-8 md:px-16 flex justify-between items-center transition-all duration-300">
+			<header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-[#EAE1D9] py-5 px-8 md:px-16 flex justify-between items-center transition-all duration-300">
 				<div>
-					<h1 className="font-extrabold uppercase tracking-[0.3em] text-sm text-[#22201F]">
+					<h1 className="font-extrabold uppercase tracking-[0.3em] text-sm text-foreground">
 						Seam Salty
 					</h1>
 					<p className="text-[9px] uppercase tracking-widest text-[#88837E] font-medium mt-0.5">
@@ -90,7 +90,7 @@ export default function Home() {
 					<span className="text-[10px] uppercase tracking-[0.25em] text-[#88837E] font-bold block">
 						Interactive Showroom
 					</span>
-					<h2 className="text-7xl md:text-[9rem] lg:text-[11rem] font-extralight tracking-tighter text-[#22201F] uppercase leading-none select-none">
+					<h2 className="text-7xl md:text-[9rem] lg:text-[11rem] font-extralight tracking-tighter text-foreground uppercase leading-none select-none">
 						Salty <span className="block font-bold text-luxury-pink -mt-3 md:-mt-6">Seam</span>
 					</h2>
 					<p className="text-xs text-[#88837E] max-w-sm leading-relaxed font-light">
@@ -113,7 +113,7 @@ export default function Home() {
 						<span className="text-[10px] uppercase tracking-[0.25em] text-[#88837E] font-bold block">
 							Ready collection
 						</span>
-						<h3 className="text-5xl font-extralight tracking-tighter text-[#22201F] uppercase">
+						<h3 className="text-5xl font-extralight tracking-tighter text-foreground uppercase">
 							Quick <strong className="font-bold text-luxury-pink">Purchase</strong>
 						</h3>
 					</div>
@@ -128,7 +128,7 @@ export default function Home() {
 							>
 								<div className="space-y-4">
 									<div className="flex justify-between items-start gap-4">
-										<h4 className="font-bold text-base text-[#22201F] tracking-tight">{product.name}</h4>
+										<h4 className="font-bold text-base text-foreground tracking-tight">{product.name}</h4>
 										<span className="text-sm font-black text-luxury-pink">
 											${product.price.toLocaleString()}
 										</span>
@@ -146,7 +146,7 @@ export default function Home() {
 										{product.colorPalette.map((color) => (
 											<span
 												key={color}
-												className="px-2.5 py-1 rounded-full bg-[#FAF8F5] border border-[#EAE1D9] text-[8px] font-semibold text-[#88837E] uppercase tracking-wider"
+												className="px-2.5 py-1 rounded-full bg-background border border-[#EAE1D9] text-[8px] font-semibold text-[#88837E] uppercase tracking-wider"
 											>
 												{color}
 											</span>
@@ -170,7 +170,7 @@ export default function Home() {
 						<span className="text-[10px] uppercase tracking-[0.25em] text-[#88837E] font-bold block">
 							Your Selection
 						</span>
-						<h3 className="text-2xl font-light tracking-tight text-[#22201F] uppercase">
+						<h3 className="text-2xl font-light tracking-tight text-foreground uppercase">
 							Checkout <strong className="font-semibold text-luxury-pink">Bag</strong>
 						</h3>
 					</div>
@@ -187,7 +187,7 @@ export default function Home() {
 									{cart.items.map((item) => (
 										<div key={item.product.name} className="py-3 flex justify-between items-center text-xs">
 											<div>
-												<span className="font-semibold text-[#22201F]">{item.product.name}</span>
+												<span className="font-semibold text-foreground">{item.product.name}</span>
 												<span className="text-[10px] text-[#88837E] ml-2">x{item.quantity}</span>
 											</div>
 											<button
@@ -199,7 +199,7 @@ export default function Home() {
 										</div>
 									))}
 								</div>
-								<div className="pt-3 border-t border-[#EAE1D9] flex justify-between items-center font-bold text-xs text-[#22201F]">
+								<div className="pt-3 border-t border-[#EAE1D9] flex justify-between items-center font-bold text-xs text-foreground">
 									<span>SUBTOTAL</span>
 									<span className="text-sm text-luxury-pink">${cart.totalPrice().toLocaleString()}</span>
 								</div>

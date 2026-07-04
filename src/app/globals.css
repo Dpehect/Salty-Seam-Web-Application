@@ -9,14 +9,15 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-playfair), serif;
+  --font-serif: var(--font-playfair), serif;
   
   /* Custom luxury branding tokens */
   --color-luxury-pink: oklch(0.74 0.07 15);     /* Muted Dusty Rose */
   --color-luxury-yellow: oklch(0.85 0.06 80);   /* Muted Champagne Gold */
   --color-luxury-orange: oklch(0.75 0.08 45);   /* Muted Terracotta */
-  --color-cream-base: oklch(0.98 0.01 50);
-  --color-luxury-slate: oklch(0.22 0.01 50);
+  --color-cream-base: oklch(0.978 0.005 80);    /* #F9F7F3 base */
+  --color-luxury-slate: oklch(0.245 0.012 40);   /* #2C2421 text */
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -44,20 +45,20 @@
 }
 
 :root {
-  --background: oklch(0.985 0.008 50); /* Sophisticated Warm Cream Base */
-  --foreground: oklch(0.22 0.01 50); /* Luxury Slate/Charcoal text */
+  --background: oklch(0.978 0.005 80); /* #F9F7F3 Textured Off-White */
+  --foreground: oklch(0.245 0.012 40); /* #2C2421 Deep Burnt Umber */
   
-  --card: oklch(0.985 0.008 50);
-  --card-foreground: oklch(0.22 0.01 50);
+  --card: oklch(0.978 0.005 80);
+  --card-foreground: oklch(0.245 0.012 40);
   
-  --popover: oklch(0.985 0.008 50);
-  --popover-foreground: oklch(0.22 0.01 50);
+  --popover: oklch(0.978 0.005 80);
+  --popover-foreground: oklch(0.245 0.012 40);
   
   --primary: oklch(0.74 0.07 15); /* Muted Pink Accent */
   --primary-foreground: oklch(0.99 0.005 50);
   
   --secondary: oklch(0.85 0.06 80); /* Muted Yellow Accent */
-  --secondary-foreground: oklch(0.22 0.01 50);
+  --secondary-foreground: oklch(0.245 0.012 40);
   
   --accent: oklch(0.75 0.08 45); /* Muted Orange Accent */
   --accent-foreground: oklch(0.99 0.005 50);
@@ -70,7 +71,7 @@
   
   --border: oklch(0.91 0.015 50);
   --input: oklch(0.91 0.015 50);
-  --ring: oklch(0.68 0.19 12);
+  --ring: oklch(0.74 0.07 15);
   
   --radius: 0.875rem;
 }
@@ -85,9 +86,12 @@
   html {
     @apply font-sans;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
 }
 
-/* Global Salty Grain Overlay to achieve immersive Editorial high-end print look */
+/* Global Salty Grain Overlay to achieve immersive Editorial high-end print look (2% opacity) */
 .salty-grain-overlay {
   position: fixed;
   top: 0;
@@ -96,6 +100,6 @@
   height: 100vh;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.022;
+  opacity: 0.02;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
