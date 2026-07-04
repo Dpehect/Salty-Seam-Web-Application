@@ -12,9 +12,9 @@
   --font-heading: var(--font-sans);
   
   /* Custom luxury branding tokens */
-  --color-luxury-pink: oklch(0.68 0.19 12);
-  --color-luxury-yellow: oklch(0.88 0.16 85);
-  --color-luxury-orange: oklch(0.68 0.21 40);
+  --color-luxury-pink: oklch(0.74 0.07 15);     /* Muted Dusty Rose */
+  --color-luxury-yellow: oklch(0.85 0.06 80);   /* Muted Champagne Gold */
+  --color-luxury-orange: oklch(0.75 0.08 45);   /* Muted Terracotta */
   --color-cream-base: oklch(0.98 0.01 50);
   --color-luxury-slate: oklch(0.22 0.01 50);
 
@@ -44,22 +44,22 @@
 }
 
 :root {
-  --background: oklch(0.98 0.01 50); /* Sophisticated Cream/Off-White Base */
+  --background: oklch(0.985 0.008 50); /* Sophisticated Warm Cream Base */
   --foreground: oklch(0.22 0.01 50); /* Luxury Slate/Charcoal text */
   
-  --card: oklch(0.98 0.01 50);
+  --card: oklch(0.985 0.008 50);
   --card-foreground: oklch(0.22 0.01 50);
   
-  --popover: oklch(0.98 0.01 50);
+  --popover: oklch(0.985 0.008 50);
   --popover-foreground: oklch(0.22 0.01 50);
   
-  --primary: oklch(0.68 0.19 12); /* Luxury Pink Accent */
+  --primary: oklch(0.74 0.07 15); /* Muted Pink Accent */
   --primary-foreground: oklch(0.99 0.005 50);
   
-  --secondary: oklch(0.88 0.16 85); /* Luxury Yellow Accent */
+  --secondary: oklch(0.85 0.06 80); /* Muted Yellow Accent */
   --secondary-foreground: oklch(0.22 0.01 50);
   
-  --accent: oklch(0.68 0.21 40); /* Luxury Orange Accent */
+  --accent: oklch(0.75 0.08 45); /* Muted Orange Accent */
   --accent-foreground: oklch(0.99 0.005 50);
   
   --muted: oklch(0.95 0.015 50);

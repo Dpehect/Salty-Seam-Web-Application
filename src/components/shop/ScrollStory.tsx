@@ -134,22 +134,37 @@ export default function ScrollStory() {
 				style={{ x: cursorX, y: cursorY, translateX: '-50%', translateY: '-50%' }}
 				className="pointer-events-none fixed top-0 left-0 z-[100] hidden md:block"
 			>
-				{/* Pulsing Outer Accent Ring */}
+				{/* Pulsing Outer Accent Ring morphing to Detail Viewer with clip-path */}
 				<motion.div
 					animate={{
-						scale: isHoveredOver3D ? 2.2 : 1.0,
-						borderColor: isHoveredOver3D ? 'var(--color-luxury-pink)' : 'rgba(34, 32, 31, 0.25)'
+						scale: isHoveredOver3D ? 2.8 : 1.0,
+						borderColor: isHoveredOver3D ? 'var(--color-luxury-pink)' : 'rgba(34, 32, 31, 0.25)',
+						backgroundColor: isHoveredOver3D ? 'rgba(252, 250, 247, 0.15)' : 'transparent',
+						backdropFilter: isHoveredOver3D ? 'blur(4px)' : 'blur(0px)'
 					}}
-					className="w-10 h-10 rounded-full border border-solid transition-colors duration-300 flex items-center justify-center"
+					className="w-10 h-10 rounded-full border border-solid transition-all duration-300 flex items-center justify-center overflow-hidden relative"
+					style={{
+						clipPath: 'circle(50% at 50% 50%)'
+					}}
 				>
-					{/* Inner Core Dot */}
+					{/* Inner Core Dot (disappears when magnified) */}
 					<motion.div
 						animate={{
-							scale: isHoveredOver3D ? 0.6 : 1.0,
-							backgroundColor: isHoveredOver3D ? 'var(--color-luxury-orange)' : 'var(--color-luxury-pink)'
+							scale: isHoveredOver3D ? 0.0 : 1.0,
+							backgroundColor: isHoveredOver3D ? 'transparent' : 'var(--color-luxury-pink)'
 						}}
-						className="w-2 h-2 rounded-full"
+						className="w-2 h-2 rounded-full absolute"
 					/>
+					
+					{isHoveredOver3D && (
+						<motion.span
+							initial={{ opacity: 0, scale: 0.7 }}
+							animate={{ opacity: 1, scale: 1 }}
+							className="text-[4px] font-mono tracking-[0.25em] text-[#22201F] uppercase font-black absolute"
+						>
+							Detail
+						</motion.span>
+					)}
 				</motion.div>
 			</motion.div>
 

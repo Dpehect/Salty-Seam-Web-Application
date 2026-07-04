@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import { useThemeStore } from '@/components/store/useThemeStore';
 
 // Zod Schema validating custom furniture orders
 const customOrderSchema = z.object({
@@ -25,7 +26,8 @@ export default function CustomOrderForm() {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-		reset
+		reset,
+		watch
 	} = useForm<CustomOrderFormValues>({
 		resolver: zodResolver(customOrderSchema),
 		defaultValues: {
@@ -33,6 +35,23 @@ export default function CustomOrderForm() {
 			specialRequests: ''
 		}
 	});
+
+	// Watch finish and fabric selections to sync reactively with Zustand store
+	const watchedWoodFinish = watch('woodFinish');
+	const watchedFabricType = watch('fabricType');
+	const themeStore = useThemeStore();
+
+	useEffect(() => {
+		if (watchedWoodFinish) {
+			themeStore.setWoodFinish(watchedWoodFinish);
+		}
+	}, [watchedWoodFinish]);
+
+	useEffect(() => {
+		if (watchedFabricType) {
+			themeStore.setFabricType(watchedFabricType);
+		}
+	}, [watchedFabricType]);
 
 	const onSubmit = async (data: CustomOrderFormValues) => {
 		// Mock API submission latency

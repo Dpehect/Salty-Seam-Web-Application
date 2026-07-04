@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { gsap } from '@/lib/gsap';
+import { useThemeStore } from '@/components/store/useThemeStore';
 
 // Import Swiper styling directives directly
 import 'swiper/css';
@@ -44,6 +45,19 @@ const gallerySlides: GallerySlide[] = [
 
 export default function ProductGallery() {
 	const containerRef = useRef<HTMLDivElement>(null);
+	const themeStore = useThemeStore();
+
+	const handleSwatchHover = (index: number) => {
+		let offset = 0;
+		if (index === 0) offset = -0.55;
+		else if (index === 1) offset = 0.55;
+		else if (index === 2) offset = 1.25;
+		themeStore.setGalleryRotationOffset(offset);
+	};
+
+	const handleSwatchLeave = () => {
+		themeStore.setGalleryRotationOffset(0);
+	};
 
 	// Trigger high-end custom GSAP transitions on slide change
 	const handleSlideChange = (swiper: any) => {
@@ -97,7 +111,12 @@ export default function ProductGallery() {
 					className="rounded-3xl overflow-hidden shadow-lg border border-[#EAE1D9] bg-white p-2"
 				>
 					{gallerySlides.map((slide, idx) => (
-						<SwiperSlide key={slide.title} className="p-8 md:p-16 flex flex-col md:flex-row gap-10 items-center justify-between">
+						<SwiperSlide 
+							key={slide.title} 
+							onMouseEnter={() => handleSwatchHover(idx)}
+							onMouseLeave={handleSwatchLeave}
+							className="p-8 md:p-16 flex flex-col md:flex-row gap-10 items-center justify-between"
+						>
 							{/* Left Column: Visual Swatch Silhouette */}
 							<div className="flex-1 w-full flex justify-center">
 								<div 
