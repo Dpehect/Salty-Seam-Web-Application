@@ -56,6 +56,7 @@ export default function ScrollStory() {
 	const [isHoveredOver3D, setIsHoveredOver3D] = useState(false);
 
 	// Custom Cursor Mouse Tracking using Framer Motion springs
+	const themeStore = useThemeStore();
 	const mouseX = useMotionValue(-100);
 	const mouseY = useMotionValue(-100);
 
@@ -141,6 +142,34 @@ export default function ScrollStory() {
 		visible: { opacity: 1, y: 0 }
 	};
 
+	// Custom Cursor Morph variants mapping Zustand states
+	const cursorVariants: Variants = {
+		default: {
+			width: 40,
+			height: 40,
+			borderRadius: '9999px',
+			borderColor: 'rgba(44, 36, 33, 0.25)',
+			backgroundColor: 'transparent',
+			backdropFilter: 'blur(0px)'
+		},
+		detail: {
+			width: 110,
+			height: 110,
+			borderRadius: '9999px',
+			borderColor: 'var(--color-luxury-pink)',
+			backgroundColor: 'rgba(249, 247, 243, 0.15)',
+			backdropFilter: 'blur(4px)'
+		},
+		drag: {
+			width: 130,
+			height: 44,
+			borderRadius: '22px',
+			borderColor: 'var(--color-luxury-orange)',
+			backgroundColor: 'rgba(249, 247, 243, 0.2)',
+			backdropFilter: 'blur(4px)'
+		}
+	};
+
 	return (
 		<div ref={containerRef} className="relative w-full min-h-[300vh] bg-[#FAF8F5] pb-24 overflow-hidden">
 			{/* Custom Playful Cursor (A11y & visual micro-interaction) */}
@@ -148,35 +177,36 @@ export default function ScrollStory() {
 				style={{ x: cursorX, y: cursorY, translateX: '-50%', translateY: '-50%' }}
 				className="pointer-events-none fixed top-0 left-0 z-[100] hidden md:block"
 			>
-				{/* Pulsing Outer Accent Ring morphing to Detail Viewer with clip-path */}
 				<motion.div
-					animate={{
-						scale: isHoveredOver3D ? 2.8 : 1.0,
-						borderColor: isHoveredOver3D ? 'var(--color-luxury-pink)' : 'rgba(34, 32, 31, 0.25)',
-						backgroundColor: isHoveredOver3D ? 'rgba(252, 250, 247, 0.15)' : 'transparent',
-						backdropFilter: isHoveredOver3D ? 'blur(4px)' : 'blur(0px)'
-					}}
-					className="w-10 h-10 rounded-full border border-solid transition-all duration-300 flex items-center justify-center overflow-hidden relative"
-					style={{
-						clipPath: 'circle(50% at 50% 50%)'
-					}}
+					variants={cursorVariants}
+					animate={themeStore.cursorType}
+					transition={{ type: 'spring', damping: 20, stiffness: 180 }}
+					className="border border-solid flex items-center justify-center overflow-hidden relative"
 				>
-					{/* Inner Core Dot (disappears when magnified) */}
-					<motion.div
-						animate={{
-							scale: isHoveredOver3D ? 0.0 : 1.0,
-							backgroundColor: isHoveredOver3D ? 'transparent' : 'var(--color-luxury-pink)'
-						}}
-						className="w-2 h-2 rounded-full absolute"
-					/>
+					{/* Default Dot */}
+					{themeStore.cursorType === 'default' && (
+						<div className="w-1.5 h-1.5 rounded-full bg-luxury-pink" />
+					)}
 					
-					{isHoveredOver3D && (
+					{/* Detail view visual clip indicator */}
+					{themeStore.cursorType === 'detail' && (
 						<motion.span
 							initial={{ opacity: 0, scale: 0.7 }}
 							animate={{ opacity: 1, scale: 1 }}
-							className="text-[4px] font-mono tracking-[0.25em] text-[#22201F] uppercase font-black absolute"
+							className="text-[4px] font-mono tracking-[0.25em] text-[#2C2421] uppercase font-black absolute"
 						>
 							Detail
+						</motion.span>
+					)}
+
+					{/* Drag swiper indicator */}
+					{themeStore.cursorType === 'drag' && (
+						<motion.span
+							initial={{ opacity: 0, scale: 0.7 }}
+							animate={{ opacity: 1, scale: 1 }}
+							className="text-[8px] font-mono tracking-[0.25em] text-[#2C2421] uppercase font-black absolute"
+						>
+							← Drag →
 						</motion.span>
 					)}
 				</motion.div>
@@ -192,8 +222,14 @@ export default function ScrollStory() {
 				>
 					<div 
 						className="w-full max-w-5xl h-[75vh] md:h-[80vh] overflow-hidden relative pointer-events-auto transition-transform duration-700"
-						onMouseEnter={() => setIsHoveredOver3D(true)}
-						onMouseLeave={() => setIsHoveredOver3D(false)}
+						onMouseEnter={() => {
+							setIsHoveredOver3D(true);
+							themeStore.setCursorType('detail');
+						}}
+						onMouseLeave={() => {
+							setIsHoveredOver3D(false);
+							themeStore.setCursorType('default');
+						}}
 					>
 						<ErrorBoundary>
 							<ShowroomScene scrollRotation={scrollRotation} />

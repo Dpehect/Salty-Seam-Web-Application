@@ -33,21 +33,30 @@ const catalogProducts: Product[] = [
 		description: 'A sculptural lounge chair wrapped in premium French bouclé, structured with a solid oak core.',
 		material: 'French Bouclé & White Oak',
 		price: 2450,
-		colorPalette: ['Cream', 'Rose Tint', 'Soft Sand']
+		colorPalette: ['Cream', 'Rose Tint', 'Soft Sand'],
+		materialOrigin: 'Alsace Woods, France',
+		craftingTime: '42 Hours Hand-stitched',
+		seamDetail: 'Double-piped contrast contours'
 	},
 	{
 		name: 'Travertine Console Table',
 		description: 'Minimalist geometric console table crafted from raw Italian travertine stone slabs.',
 		material: 'Honed Italian Travertine',
 		price: 3800,
-		colorPalette: ['Warm Ivory', 'Sunset Amber']
+		colorPalette: ['Warm Ivory', 'Sunset Amber'],
+		materialOrigin: 'Tuscany Quarries, Italy',
+		craftingTime: '28 Hours Masoned',
+		seamDetail: 'Zero-joint stone slab joinery'
 	},
 	{
 		name: 'Oasis Sunset Ottoman',
 		description: 'Low-profile velvet seating block featuring dynamic orange-toned piping details.',
 		material: 'Cotton Velvet & Brass Base',
 		price: 1250,
-		colorPalette: ['Apricot Orange', 'Marigold']
+		colorPalette: ['Apricot Orange', 'Marigold'],
+		materialOrigin: 'Biella Mills, Italy',
+		craftingTime: '18 Hours Tailored',
+		seamDetail: 'Contrast accent piping threads'
 	}
 ];
 
@@ -139,6 +148,28 @@ export default function Home() {
 									<p className="text-xs text-[#55514E] leading-relaxed font-light">
 										{product.description}
 									</p>
+
+									{/* Premium Editorial Metadata */}
+									<div className="pt-2 grid grid-cols-2 gap-4 text-[9px] font-mono uppercase tracking-wider text-[#88837E] font-medium border-t border-[#EAE1D9]/40 pt-4">
+										{product.materialOrigin && (
+											<div>
+												<span className="block font-black text-foreground">Origin</span>
+												<span>{product.materialOrigin}</span>
+											</div>
+										)}
+										{product.craftingTime && (
+											<div>
+												<span className="block font-black text-foreground">Atelier</span>
+												<span>{product.craftingTime}</span>
+											</div>
+										)}
+										{product.seamDetail && (
+											<div className="col-span-2">
+												<span className="block font-black text-foreground">Detailing</span>
+												<span>{product.seamDetail}</span>
+											</div>
+										)}
+									</div>
 								</div>
 
 								<div className="space-y-4 pt-6 border-t border-[#EAE1D9]/40 mt-6">

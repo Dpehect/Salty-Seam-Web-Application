@@ -37,10 +37,38 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 			vertexShader: `
 				varying vec2 vUv;
 				varying vec3 vNormal;
+				uniform float uTime;
+				uniform float uScrollGlow;
+
+				// High-frequency pseudo-random hash
+				float hash(vec3 p) {
+					p = fract(p * 0.3183099 + vec3(0.1, 0.1, 0.1));
+					p *= 17.0;
+					return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+				}
+
+				// Buttery 3D Noise generator to simulate natural organic bouclé weave
+				float noise(vec3 x) {
+					vec3 i = floor(x);
+					vec3 f = fract(x);
+					f = f * f * (3.0 - 2.0 * f);
+					return mix(
+						mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
+							mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+						mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+							mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z
+					);
+				}
+
 				void main() {
 					vUv = uv;
 					vNormal = normalize(normalMatrix * normal);
-					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+					
+					// Displace vertices along the normal to give bouclé textural relief
+					float displacement = noise(position * 75.0 + vec3(0.0, uTime * 0.08, 0.0)) * 0.012;
+					vec3 displacedPosition = position + normal * displacement;
+					
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
 				}
 			`,
 			fragmentShader: `
@@ -290,7 +318,7 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 		<group ref={groupRef} position={[0, -0.4, 0]}>
 			{/* 1. Flat Ottoman Seat Cushion */}
 			<mesh ref={seatRef} position={[0, 0, 0]} castShadow receiveShadow>
-				<boxGeometry args={[1.6, 0.35, 1.6]} />
+				<boxGeometry args={[1.6, 0.35, 1.6, 64, 16, 64]} />
 				<shaderMaterial
 					ref={materialRef}
 					args={[shaderMaterialData]}
@@ -300,7 +328,7 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 
 			{/* 2. Curved Backrest */}
 			<mesh ref={backrestRef} position={[0, 0.65, -0.65]} rotation={[0.08, 0, 0]} castShadow receiveShadow>
-				<boxGeometry args={[1.6, 0.95, 0.3]} />
+				<boxGeometry args={[1.6, 0.95, 0.3, 64, 32, 16]} />
 				<shaderMaterial
 					ref={backMaterialRef}
 					args={[shaderMaterialData]}

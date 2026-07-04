@@ -108,7 +108,9 @@ export default function ProductGallery() {
 					navigation
 					pagination={{ clickable: true }}
 					onSlideChange={handleSlideChange}
-					className="rounded-3xl overflow-hidden shadow-lg border border-[#EAE1D9] bg-white p-2"
+					onMouseEnter={() => themeStore.setCursorType('drag')}
+					onMouseLeave={() => themeStore.setCursorType('default')}
+					className="rounded-3xl overflow-hidden shadow-lg border border-[#EAE1D9] bg-white p-2 cursor-none pointer-events-auto"
 				>
 					{gallerySlides.map((slide, idx) => (
 						<SwiperSlide 
