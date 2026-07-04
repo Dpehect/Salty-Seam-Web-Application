@@ -86,15 +86,15 @@ export default function Home() {
 
 			{/* 1. Hero / Scroll Story Area (WebGL Chair rotating with scroll, story descriptions pinning) */}
 			<section className="w-full">
-				<div className="max-w-4xl mx-auto text-center px-6 pt-16 pb-8 space-y-4">
-					<span className="px-3 py-1 rounded-full bg-luxury-pink/10 text-luxury-pink text-[9px] uppercase tracking-widest font-extrabold">
-						Interactive Atelier
+				<div className="max-w-7xl mx-auto text-left px-8 md:px-16 pt-24 pb-8 space-y-6">
+					<span className="text-[10px] uppercase tracking-[0.25em] text-[#88837E] font-bold block">
+						Interactive Showroom
 					</span>
-					<h2 className="text-4xl md:text-5xl font-light tracking-tight text-[#22201F] uppercase leading-tight">
-						The Art of <strong className="font-semibold text-luxury-pink">Contour</strong>
+					<h2 className="text-7xl md:text-[9rem] lg:text-[11rem] font-extralight tracking-tighter text-[#22201F] uppercase leading-none select-none">
+						Salty <span className="block font-bold text-luxury-pink -mt-3 md:-mt-6">Seam</span>
 					</h2>
-					<p className="text-xs text-[#88837E] max-w-md mx-auto leading-relaxed font-light">
-						Scroll to experience the slow-rotation showroom. Accents in pink, yellow, and orange highlight the stitching structure.
+					<p className="text-xs text-[#88837E] max-w-sm leading-relaxed font-light">
+						A bespoke digital atelier. Scroll to spin the 3D white oak & bouclé lounge chair. The highlighted fabric contours react to scroll velocity in real-time.
 					</p>
 				</div>
 
@@ -106,32 +106,34 @@ export default function Home() {
 			<ProductGallery />
 
 			{/* 3. Catalog Catalog and Quick Order */}
-			<section className="max-w-7xl mx-auto w-full px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+			<section className="max-w-7xl mx-auto w-full px-6 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 relative">
 				{/* Catalog Product Grid */}
-				<div className="lg:col-span-7 space-y-6">
-					<div className="space-y-1">
+				<div className="lg:col-span-7 space-y-12">
+					<div className="space-y-2">
 						<span className="text-[10px] uppercase tracking-[0.25em] text-[#88837E] font-bold block">
 							Ready collection
 						</span>
-						<h3 className="text-2xl font-light tracking-tight text-[#22201F] uppercase">
-							Quick <strong className="font-semibold text-luxury-pink">Purchase</strong>
+						<h3 className="text-5xl font-extralight tracking-tighter text-[#22201F] uppercase">
+							Quick <strong className="font-bold text-luxury-pink">Purchase</strong>
 						</h3>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						{catalogProducts.map((product) => (
+					<div className="flex flex-col gap-12 lg:gap-16">
+						{catalogProducts.map((product, idx) => (
 							<div
 								key={product.name}
-								className="p-6 rounded-2xl border border-[#EAE1D9] bg-white shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between min-h-[300px]"
+								className={`p-8 rounded-3xl border border-[#EAE1D9] bg-white shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between min-h-[320px] max-w-xl relative ${
+									idx === 0 ? 'lg:translate-x-6' : idx === 1 ? 'lg:translate-x-16 lg:-mt-4' : 'lg:-translate-x-2'
+								}`}
 							>
-								<div className="space-y-3">
-									<div className="flex justify-between items-start gap-3">
-										<h4 className="font-bold text-sm text-[#22201F]">{product.name}</h4>
-										<span className="text-xs font-black text-luxury-pink">
+								<div className="space-y-4">
+									<div className="flex justify-between items-start gap-4">
+										<h4 className="font-bold text-base text-[#22201F] tracking-tight">{product.name}</h4>
+										<span className="text-sm font-black text-luxury-pink">
 											${product.price.toLocaleString()}
 										</span>
 									</div>
-									<p className="text-[9px] uppercase tracking-wider text-[#88837E] font-bold">
+									<p className="text-[9px] uppercase tracking-wider text-[#88837E] font-extrabold">
 										{product.material}
 									</p>
 									<p className="text-xs text-[#55514E] leading-relaxed font-light">
@@ -139,12 +141,12 @@ export default function Home() {
 									</p>
 								</div>
 
-								<div className="space-y-4 pt-4 border-t border-[#EAE1D9]/40">
-									<div className="flex flex-wrap gap-1">
+								<div className="space-y-4 pt-6 border-t border-[#EAE1D9]/40 mt-6">
+									<div className="flex flex-wrap gap-1.5">
 										{product.colorPalette.map((color) => (
 											<span
 												key={color}
-												className="px-2 py-0.5 rounded-full bg-[#FAF8F5] border border-[#EAE1D9] text-[8px] font-semibold text-[#88837E]"
+												className="px-2.5 py-1 rounded-full bg-[#FAF8F5] border border-[#EAE1D9] text-[8px] font-semibold text-[#88837E] uppercase tracking-wider"
 											>
 												{color}
 											</span>
@@ -152,9 +154,9 @@ export default function Home() {
 									</div>
 									<Button
 										onClick={() => handleAddProduct(product)}
-										className="w-full text-xs uppercase tracking-wider font-semibold cursor-pointer py-4"
+										className="w-full text-xs uppercase tracking-widest font-bold cursor-pointer py-5"
 									>
-										Add to Cart
+										Add to Selection
 									</Button>
 								</div>
 							</div>

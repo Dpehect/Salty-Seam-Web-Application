@@ -16,9 +16,13 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 	const backMaterialRef = useRef<THREE.ShaderMaterial>(null);
 	const legsMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
 
+	// Mesh and group references to coordinate exploding Easter Egg
+	const seatRef = useRef<THREE.Mesh>(null);
+	const backrestRef = useRef<THREE.Mesh>(null);
+	const legsGroupRef = useRef<THREE.Group>(null);
+
 	// Target values for lerped mouse drift and swatches rotation offset
 	const targetGalleryRot = useRef(0);
-	const scrollSpeedRef = useRef(0);
 
 	// Custom GLSL shader material setup
 	const shaderMaterialData = useMemo(() => {
@@ -49,32 +53,43 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 				uniform float uScrollGlow;
 
 				void main() {
-					// 1. Procedural fabric grain using fine noise modulated by roughness
+					// 1. Procedural fabric grain using fine noise
 					float noiseVal = fract(sin(dot(vUv * 130.0, vec2(12.9898, 78.233))) * 43758.5453);
-					vec3 fabricBase = uBaseColor + (noiseVal - 0.5) * 0.022 * (uRoughness + 0.25);
 					
-					// 2. Compute seam contours near box geometry face boundaries
+					// 2. Adjust roughness and metalness dynamically based on scroll velocity (intensity)
+					float currentRoughness = mix(uRoughness, uRoughness * 0.32, clamp(uScrollGlow, 0.0, 1.0));
+					float currentMetalness = mix(0.0, 0.85, clamp(uScrollGlow, 0.0, 1.0));
+
+					vec3 fabricBase = uBaseColor + (noiseVal - 0.5) * 0.022 * (currentRoughness + 0.25);
+					
+					// 3. Compute seam contours near box geometry face boundaries
 					float borderX = smoothstep(0.04, 0.0, vUv.x) + smoothstep(0.96, 1.0, vUv.x);
 					float borderY = smoothstep(0.04, 0.0, vUv.y) + smoothstep(0.96, 1.0, vUv.y);
 					float seamIntensity = clamp(borderX + borderY, 0.0, 1.0);
 
-					// 3. Elegant, desaturated luxury pastel interior accents
+					// 4. Muted pastel accents
 					vec3 rose = vec3(0.74, 0.44, 0.47);      // Muted Dusty Rose
 					vec3 gold = vec3(0.85, 0.77, 0.65);      // Muted Champagne Gold
 					vec3 clay = vec3(0.75, 0.50, 0.40);      // Muted Terracotta
 
-					// Slow coordinates-based color shifting cycle
+					// Slow color shifting cycle
 					vec3 highlightColor = mix(rose, clay, sin(uTime * 0.75 + vUv.y * 5.0) * 0.5 + 0.5);
 					highlightColor = mix(highlightColor, gold, cos(uTime * 0.5 + vUv.x * 3.0) * 0.3 + 0.3);
 
-					// 4. Seam is modulated by lighting angles to only catch specular highlights (not neon glow)
+					// 5. Blinn-Phong specular highlight calculation using scroll-induced metalness
 					vec3 normal = normalize(vNormal);
 					vec3 lightDirection = normalize(vec3(3.0, 5.0, 3.0));
 					float ndl = max(dot(normal, lightDirection), 0.0) * 0.55 + 0.45;
 
-					// Highlight glows softly when scrolling is active
-					float finalGlow = seamIntensity * (uSeamGlow + uScrollGlow * 0.45) * clamp(ndl, 0.25, 1.0);
-					vec3 finalColor = mix(fabricBase, highlightColor, finalGlow);
+					vec3 viewDirection = normalize(vec3(0.0, 0.4, 3.2));
+					vec3 halfDir = normalize(lightDirection + viewDirection);
+					float specExponent = 32.0 * (1.0 - currentRoughness);
+					float spec = pow(max(dot(normal, halfDir), 0.0), max(1.0, specExponent));
+					vec3 specularHighlight = vec3(spec * currentMetalness * 0.6);
+
+					// Seam highlight modulated by lighting and scroll velocity
+					float finalGlow = seamIntensity * (uSeamGlow + uScrollGlow * 0.48) * clamp(ndl, 0.25, 1.0);
+					vec3 finalColor = mix(fabricBase, highlightColor, finalGlow) + specularHighlight;
 
 					gl_FragColor = vec4(finalColor * ndl, 1.0);
 				}
@@ -161,6 +176,74 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 				duration: 1.4,
 				ease: 'luxury'
 			});
+
+			// 4. Exploding Chair Easter Egg GSAP Animation
+			if (state.isExploding && seatRef.current && backrestRef.current && legsGroupRef.current) {
+				// Kill any active tweens on the furniture parts
+				gsap.killTweensOf([seatRef.current.position, backrestRef.current.position, legsGroupRef.current.position]);
+
+				const tl = gsap.timeline({
+					onComplete: () => {
+						// Reset state when animation completes
+						useThemeStore.getState().setIsExploding(false);
+					}
+				});
+
+				// Explode meshes outwards and spike seam highlight glows
+				tl.to(backrestRef.current.position, {
+					y: 2.2,
+					z: -2.0,
+					duration: 1.0,
+					ease: 'luxury'
+				})
+				.to(seatRef.current.position, {
+					y: -0.8,
+					z: 0.8,
+					duration: 1.0,
+					ease: 'luxury'
+				}, 0)
+				.to(legsGroupRef.current.position, {
+					y: -1.5,
+					duration: 1.0,
+					ease: 'luxury'
+				}, 0);
+
+				// Flash seams during explosion
+				if (materialRef.current && backMaterialRef.current) {
+					tl.to([materialRef.current.uniforms.uScrollGlow, backMaterialRef.current.uniforms.uScrollGlow], {
+						value: 2.8,
+						duration: 0.5,
+						ease: 'power2.out'
+					}, 0)
+					.to([materialRef.current.uniforms.uScrollGlow, backMaterialRef.current.uniforms.uScrollGlow], {
+						value: 0.0,
+						duration: 1.2,
+						ease: 'luxury'
+					}, 1.0);
+				}
+
+				// Reassemble chair components back to resting dimensions
+				tl.to(backrestRef.current.position, {
+					y: 0.65,
+					z: -0.65,
+					duration: 1.4,
+					ease: 'luxury',
+					delay: 0.6
+				})
+				.to(seatRef.current.position, {
+					y: 0,
+					z: 0,
+					duration: 1.4,
+					ease: 'luxury',
+					delay: 0.6
+				}, '<')
+				.to(legsGroupRef.current.position, {
+					y: -0.2,
+					duration: 1.4,
+					ease: 'luxury',
+					delay: 0.6
+				}, '<');
+			}
 		});
 
 		return () => unsubscribe();
@@ -168,14 +251,13 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 
 	// R3F Render frame ticks
 	useFrame((state, delta) => {
-		// Calculate instantaneous scroll speed to drive dynamic seam highlight flash
 		if (materialRef.current && backMaterialRef.current) {
 			materialRef.current.uniforms.uTime.value += delta;
 			backMaterialRef.current.uniforms.uTime.value += delta;
 
 			// Decelerate scroll glow uniform back to resting state
 			const currentGlow = materialRef.current.uniforms.uScrollGlow.value;
-			const decay = currentGlow - currentGlow * 4.0 * delta;
+			const decay = currentGlow - currentGlow * 3.5 * delta;
 			materialRef.current.uniforms.uScrollGlow.value = Math.max(0, decay);
 			backMaterialRef.current.uniforms.uScrollGlow.value = Math.max(0, decay);
 		}
@@ -207,7 +289,7 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 	return (
 		<group ref={groupRef} position={[0, -0.4, 0]}>
 			{/* 1. Flat Ottoman Seat Cushion */}
-			<mesh position={[0, 0, 0]} castShadow receiveShadow>
+			<mesh ref={seatRef} position={[0, 0, 0]} castShadow receiveShadow>
 				<boxGeometry args={[1.6, 0.35, 1.6]} />
 				<shaderMaterial
 					ref={materialRef}
@@ -217,7 +299,7 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 			</mesh>
 
 			{/* 2. Curved Backrest */}
-			<mesh position={[0, 0.65, -0.65]} rotation={[0.08, 0, 0]} castShadow receiveShadow>
+			<mesh ref={backrestRef} position={[0, 0.65, -0.65]} rotation={[0.08, 0, 0]} castShadow receiveShadow>
 				<boxGeometry args={[1.6, 0.95, 0.3]} />
 				<shaderMaterial
 					ref={backMaterialRef}
@@ -227,7 +309,7 @@ export default function Chair({ scrollRotation = 0 }: ChairProps) {
 			</mesh>
 
 			{/* 3. Luxury Wood Supports (Oak styling) */}
-			<group position={[0, -0.2, 0]}>
+			<group ref={legsGroupRef} position={[0, -0.2, 0]}>
 				{/* Share standard material to optimize memory */}
 				<meshStandardMaterial ref={legsMaterialRef} color="#D4C5B3" roughness={0.55} />
 				

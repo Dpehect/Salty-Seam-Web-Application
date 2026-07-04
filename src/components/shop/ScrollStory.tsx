@@ -7,6 +7,7 @@ import { ScrollTrigger } from '@/lib/gsap';
 import Lenis from 'lenis';
 import dynamic from 'next/dynamic';
 import ErrorBoundary from '@/components/canvas/ErrorBoundary';
+import { useThemeStore } from '@/components/store/useThemeStore';
 
 // Dynamically import WebGL Canvas scene to prevent SSR issues
 const ShowroomScene = dynamic(() => import('@/components/canvas/ShowroomScene'), {
@@ -29,20 +30,20 @@ interface StoryStep {
 
 const storySteps: StoryStep[] = [
 	{
-		title: 'Sculptural Structure',
+		title: 'Sculptural Base',
 		subtitle: '01 / Anatomy',
 		description: 'The Seam Lounge Chair features a massive, low-slung White Oak base configured to defy standard joinery bounds, bringing structural weight to luxury spaces.',
 		specs: ['FSC Oak Core', 'Integrated Tenons', 'Textured End-grain']
 	},
 	{
-		title: 'Bouclé Stitching',
+		title: 'Bouclé Stitch',
 		subtitle: '02 / Texture',
 		description: 'Soft, raw loops of French Bouclé fabric highlight the curved seams. Every edge is highlighted by piping lines detailed in warm luxury accents.',
 		specs: ['70% Wool Yarn', 'Hand-stitched Seams', 'Soft Cream Tint']
 	},
 	{
-		title: 'Accent Details',
-		subtitle: '03 / Highlight',
+		title: 'Accent Highlight',
+		subtitle: '03 / Detail',
 		description: 'Pink, yellow, and orange color accents details transition dynamically under changing lighting angles, shifting visual focus across the organic contours.',
 		specs: ['Custom HSL Pigment', 'Contrast Piping', 'Polished Brass Accents']
 	}
@@ -78,7 +79,7 @@ export default function ScrollStory() {
 		};
 		gsap.ticker.add(tickHandler);
 
-		// GSAP ScrollTrigger to pin left side and animate R3F rotation
+		// GSAP ScrollTrigger to pin background 3D canvas and animate R3F rotation
 		const pinTrigger = ScrollTrigger.create({
 			trigger: containerRef.current,
 			start: 'top top',
@@ -99,36 +100,49 @@ export default function ScrollStory() {
 		};
 		window.addEventListener('mousemove', handleMouseMove);
 
+		// Trigger Easter Egg explosion when scroll reaches absolute page bottom
+		const checkBottom = () => {
+			const threshold = 18; // 18px from bottom
+			const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - threshold;
+			const alreadyExploding = useThemeStore.getState().isExploding;
+			
+			if (isBottom && !alreadyExploding) {
+				useThemeStore.getState().setIsExploding(true);
+			}
+		};
+		window.addEventListener('scroll', checkBottom, { passive: true });
+
 		return () => {
 			gsap.ticker.remove(tickHandler);
 			lenis.destroy();
 			pinTrigger.kill();
 			window.removeEventListener('mousemove', handleMouseMove);
+			window.removeEventListener('scroll', checkBottom);
 		};
 	}, [mouseX, mouseY]);
 
 	// Framer Motion Animation Variants for Story cards
 	const cardVariants: Variants = {
-		hidden: { opacity: 0, y: 40 },
+		hidden: { opacity: 0, y: 50 },
 		visible: {
 			opacity: 1,
 			y: 0,
 			transition: {
 				type: 'spring',
-				stiffness: 100,
-				damping: 15,
-				staggerChildren: 0.12
+				stiffness: 80,
+				damping: 18,
+				staggerChildren: 0.15
 			}
 		}
 	};
 
 	const itemVariants: Variants = {
-		hidden: { opacity: 0, y: 15 },
+		hidden: { opacity: 0, y: 20 },
 		visible: { opacity: 1, y: 0 }
 	};
 
 	return (
-		<div ref={containerRef} className="relative w-full min-h-[300vh] bg-[#FAF8F5] pb-24">
+		<div ref={containerRef} className="relative w-full min-h-[300vh] bg-[#FAF8F5] pb-24 overflow-hidden">
 			{/* Custom Playful Cursor (A11y & visual micro-interaction) */}
 			<motion.div
 				style={{ x: cursorX, y: cursorY, translateX: '-50%', translateY: '-50%' }}
@@ -168,17 +182,19 @@ export default function ScrollStory() {
 				</motion.div>
 			</motion.div>
 
-			{/* Split Screen Grid Layout */}
-			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto px-6">
+			{/* Immersive Floating/Overlapping Grid Layout */}
+			<div className="relative w-full z-10">
 				
-				{/* Pinned Left Pane: 3D Atelier Showroom */}
+				{/* Pinned 3D Atelier Showroom in the Background (Scroll sync) */}
 				<div 
 					ref={stickyRef} 
-					className="lg:col-span-6 h-screen flex items-center justify-center py-16 z-10"
-					onMouseEnter={() => setIsHoveredOver3D(true)}
-					onMouseLeave={() => setIsHoveredOver3D(false)}
+					className="h-screen w-full flex items-center justify-center z-0 pointer-events-none"
 				>
-					<div className="w-full h-[70vh] rounded-3xl overflow-hidden border border-[#EAE1D9] bg-white shadow-xl relative">
+					<div 
+						className="w-full max-w-5xl h-[75vh] md:h-[80vh] overflow-hidden relative pointer-events-auto transition-transform duration-700"
+						onMouseEnter={() => setIsHoveredOver3D(true)}
+						onMouseLeave={() => setIsHoveredOver3D(false)}
+					>
 						<ErrorBoundary>
 							<ShowroomScene scrollRotation={scrollRotation} />
 						</ErrorBoundary>
@@ -191,52 +207,57 @@ export default function ScrollStory() {
 					</div>
 				</div>
 
-				{/* Scrolling Right Pane: Brand Storytelling */}
-				<div className="lg:col-span-6 space-y-[60vh] py-[30vh]">
+				{/* Floating Storytelling Elements Overlapping the Background Canvas */}
+				<div className="w-full relative z-10 pointer-events-none">
 					{storySteps.map((step, idx) => (
 						<motion.div
 							key={step.title}
 							variants={cardVariants}
 							initial="hidden"
 							whileInView="visible"
-							viewport={{ once: true, margin: '-20%' }}
-							className="glass-panel p-8 rounded-3xl shadow-sm bg-white border border-[#EAE1D9] space-y-6 relative"
+							viewport={{ once: true, margin: '-25%' }}
+							className={`max-w-2xl px-6 min-h-screen flex flex-col justify-center pointer-events-auto relative ${
+								idx % 2 === 0 ? 'ml-auto mr-12 text-right items-end' : 'mr-auto ml-12 text-left items-start'
+							}`}
 						>
-							{/* Badge */}
-							<motion.span 
-								variants={itemVariants} 
-								className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-luxury-pink"
-							>
-								{step.subtitle}
-							</motion.span>
-
-							{/* Title */}
-							<motion.h3 
-								variants={itemVariants} 
-								className="text-2xl font-light tracking-tight text-[#22201F] uppercase"
-							>
-								{step.title}
-							</motion.h3>
-
-							{/* Body Paragraph */}
-							<motion.p 
-								variants={itemVariants} 
-								className="text-sm text-[#55514E] leading-relaxed font-light"
-							>
-								{step.description}
-							</motion.p>
-
-							{/* Staggered Specs List */}
-							<motion.div variants={itemVariants} className="flex flex-wrap gap-2 pt-4 border-t border-[#EAE1D9]/65">
-								{step.specs.map((spec) => (
-									<span
-										key={spec}
-										className="px-3.5 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#EAE1D9] text-[10px] font-semibold text-[#88837E] uppercase tracking-wider"
-									>
-										{spec}
+							<div className="space-y-6 max-w-xl">
+								{/* Huge Overlapping Editorial Title */}
+								<motion.h3 
+									variants={itemVariants} 
+									className="text-6xl md:text-[8rem] lg:text-[10rem] font-extralight tracking-tighter leading-none text-[#22201F] uppercase select-none -mb-6 md:-mb-12 font-sans"
+								>
+									{step.title.split(' ')[0]}
+									<span className={`block font-bold text-luxury-pink text-5xl md:text-[6.5rem] lg:text-[7.5rem] tracking-tighter -mt-2`}>
+										{step.title.split(' ')[1] || ''}
 									</span>
-								))}
-							</motion.div>
+								</motion.h3>
+
+								<motion.span 
+									variants={itemVariants} 
+									className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-[#88837E] block pt-4"
+								>
+									{step.subtitle}
+								</motion.span>
+
+								<motion.p 
+									variants={itemVariants} 
+									className="text-xs md:text-sm text-[#55514E] leading-relaxed font-light backdrop-blur-sm bg-white/70 p-6 rounded-2xl border border-[#EAE1D9]/30 shadow-sm"
+								>
+									{step.description}
+								</motion.p>
+
+								{/* Staggered Specs List */}
+								<motion.div variants={itemVariants} className="flex flex-wrap gap-2 pt-2">
+									{step.specs.map((spec) => (
+										<span
+											key={spec}
+											className="px-3.5 py-1.5 rounded-xl bg-white border border-[#EAE1D9] text-[9px] font-semibold text-[#88837E] uppercase tracking-wider"
+										>
+											{spec}
+										</span>
+									))}
+								</motion.div>
+							</div>
 						</motion.div>
 					))}
 				</div>

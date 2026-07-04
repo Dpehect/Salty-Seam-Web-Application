@@ -1,5 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -46,12 +48,46 @@ function Button({
   size = "default",
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  const ref = useRef<HTMLButtonElement>(null);
+  
+  // Magnetic spring coordinate tracking values
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { damping: 14, stiffness: 120 });
+  const springY = useSpring(y, { damping: 14, stiffness: 120 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    const dx = e.clientX - centerX;
+    const dy = e.clientY - centerY;
+    
+    // Pull the button frame toward cursor position
+    x.set(dx * 0.32);
+    y.set(dy * 0.32);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
   return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
+    <motion.div
+      style={{ x: springX, y: springY }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="inline-flex"
+    >
+      <ButtonPrimitive
+        ref={ref}
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      />
+    </motion.div>
   )
 }
 
